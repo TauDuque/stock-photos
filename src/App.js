@@ -9,42 +9,46 @@ const searchUrl = `https://api.unsplash.com/search/photos/`;
 function App() {
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [query, setQuery] = useState("");
-
   const fetchImages = async () => {
     setLoading(true);
     let url;
     const urlPage = `&page=${page}`;
     const urlQuery = `&query=${query}`;
-
     if (query) {
       url = `${searchUrl}${clientID}${urlPage}${urlQuery}`;
     } else {
-      url = `${mainUrl}${clientID}&page=${urlPage}`;
+      url = `${mainUrl}${clientID}${urlPage}`;
     }
-
     try {
       const response = await fetch(url);
       const data = await response.json();
       setPhotos((lastImg) => {
-        return [...lastImg, ...data];
+        if (query && page === 1) {
+          return data.results;
+        } else if (query) {
+          return [...lastImg, ...data.results];
+        } else {
+          return [...lastImg, ...data];
+        }
       });
       setLoading(false);
     } catch (error) {
-      setLoading(false);
       console.log(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
     fetchImages();
+    // eslint-disable-next-line
   }, [page]);
 
   useEffect(() => {
     const event = window.addEventListener("scroll", () => {
       if (
-        !loading &&
-        window.innerHeight + window.scrollY >= document.body.scrollHeight - 5
+        (!loading && window.innerHeight + window.scrollY) >=
+        document.body.scrollHeight - 5
       ) {
         setPage((oldPage) => {
           return oldPage + 1;
@@ -52,11 +56,12 @@ function App() {
       }
     });
     return () => window.removeEventListener("scroll", event);
+    // eslint-disable-next-line
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("vai");
+    setPage(1);
   };
 
   return (
@@ -77,7 +82,7 @@ function App() {
       </section>
       <section className="photos">
         <div className="photos-center">
-          {photos.map((image, index) => {
+          {photos.map((image, id) => {
             return <Photo key={image.id} {...image} />;
           })}
         </div>
