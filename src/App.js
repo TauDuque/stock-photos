@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
+
 import Photo from "./Photo";
 const clientID = `?client_id=${process.env.REACT_APP_ACCESS_KEY}`;
-
 const mainUrl = `https://api.unsplash.com/photos/`;
 const searchUrl = `https://api.unsplash.com/search/photos/`;
 
@@ -24,6 +24,7 @@ function App() {
     try {
       const response = await fetch(url);
       const data = await response.json();
+      console.log(data);
       setPhotos((lastImg) => {
         if (query && page === 1) {
           return data.results;
@@ -71,8 +72,8 @@ function App() {
           <input
             type="text"
             placeholder="search"
-            className="form-input"
             value={query}
+            className="form-input"
             onChange={(e) => setQuery(e.target.value)}
           />
           <button type="submit" className="submit-btn" onClick={handleSubmit}>
@@ -82,8 +83,8 @@ function App() {
       </section>
       <section className="photos">
         <div className="photos-center">
-          {photos.map((image, id) => {
-            return <Photo key={id} {...image} />;
+          {photos.map((image, index) => {
+            return <Photo key={index} {...image} />;
           })}
         </div>
         {loading && <h2 className="loading">Loading...</h2>}
