@@ -13,7 +13,7 @@ const Photo = ({
 }) => {
   return (
     <article className="photo">
-      <a href={html}>
+      <a href={html} className="photo" target="_blank" rel="noreferrer">
         <img src={regular} alt={alt_description} />
       </a>
       <div className="photo-info">
